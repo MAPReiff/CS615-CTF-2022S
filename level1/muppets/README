@@ -2,4 +2,18 @@ Team: Muppets
 
 Server: ec2-35-173-203-248.compute-1.amazonaws.com
 
-Passphrase: Limulus
+Passphrase: Naming things is hard: Horseshoe crabs aren't crabs.
+
+Method:
+- First, we generated a list of all IPs in the given CIDR and determined their
+  FQDNs using the `host` command.
+- After, we initially attempted to use `sha256sum` to hash each of these and
+  compare, however that did not work. In the end, we found a tool to brute
+  force the hash, using the previously found FQDNs as a dictionary.
+  https://github.com/ngirot/BruteForce
+- When we connected to the server using SSH, we used the hint about the
+  Atlantic Horseshoe Crabs to determine the username was limulus and guessed
+  that the password was the second part of the name, polyphemus.
+- We then searched through the directories and found a file named `^Mlevel2^M` 
+  in the directory `/homes/limulus/. /🦀/` which we assume to be the required
+  passphrase to advance to level2.
