@@ -1,0 +1,33 @@
+Team: muppets
+
+Passphrase: Horseshoe Crabs have 9 eyes.
+
+Method:
+- First, we discovered that we could use our team name, muppets, as the name
+  for the admin portal.
+- We learned that whatever file we uploaded had to be signed the same way we
+  sign our READMEs, which meant that our usernames were linked to the muppets
+  name on the server.
+- While snooping around the source of the admin portal, we discovered there
+  was a hidden input field, `dest`, which had the default value of `/var/www/pics`.
+- Using, nmap, we also discovered an email server was running with SMTP advertised
+  over port 25.
+- We attempted to send emails to various possible users on the server, such as
+  limulus, but we discovered each team also had a valid email user.
+- Using this and the fact that SSH was also open, we discerned it was likely
+  that each team had a user on the machine, where email and ssh connections
+  could be acquired.
+- This meant each team had a `/home/$TEAM`, where they likely had access to.
+- A special file also exists under ~/.ssh known as authorized keys, which will
+  allow any public key in the file the ability to connect to a machine without a
+  password, so we put one of our keys in an authorized_keys file and uploaded
+  it to the site using a script we threw together below:
+
+```sh
+cp ~/.ssh/id_rsa.pub authorized_keys
+gpg --sign --detach-sig -u 1F12F649CDF3266E13051BB8CB7DE04247ED7D7C --output sig.asc authorized_keys
+curl -X POST -F 'team=muppets' -F "file=@authorized_keys" -F 'dest=/home/muppets/.ssh' \
+    -F "sig=@sig.asc" 'http://[2600:1f18:400c:b800:92f4:ac6e:8a7f:669e]/cgi-bin/index.cgi'
+```
+
+- With that, we could SSH into the server and retrieve the passphrase for level 3.
