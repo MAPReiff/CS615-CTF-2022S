@@ -1,0 +1,36 @@
+Team: muppets
+
+Passphrase: Horseshoe Crabs have blue blood due to the hemocyanin instead of
+            hemoglobin used to transport oxygen.
+
+Method:
+- Oh boy, this one was tedious. So, we began by searching around the
+  file system as our muppets user for anything of note. We found
+  `/home/limulus`, the home directory of the limulus user which had the files,
+  `tssb` and `instructions`, which were of note.
+- There also existed `.procmailrc`, which contained configuration for the SMTP
+  server, denoting that all mail sent to the limulus user would be sent
+  through tssb.
+- `.tssbrc` also existed, which was a configuration file for tssb, denoting
+  that the password for emails would be `hemocyanin`. With this, we were
+  pretty clueless with what to do next for like 2 days, as tssb's man page
+  was not accessible to us. Eventually, however, this was fixed, and we were
+  informed that we could retrieve the contents of `/home/limulus/instructions`
+  if we sent a very carefully-formatted email to
+  <limulus@ctf-level2.stevens.netmeister.org> with the subject containing
+  `/home/limulus/instructions hemocyanin`, with the mail sent from another
+  user on the system, `telson@cs615ctf.stevens.netmeister.org`. In order for
+  any of us to actually get the email, we also had to add the header for
+  directing the `Reply-To` to one of our emails.
+- With that sent, we were informed that the passphrase for level 4 was
+  somewhere on `/dev/bgfs`, encrypted with our keys.
+- After reading the manpage informing us of the table of contents and the
+  structure of the data on the file system, we then dd'd to our offset in
+  the file system, specifically 197120.
+- The first 4 bytes also told us that our secret was 1741 bytes long, so
+  we grabbed the first 1745 bytes (size-inclusive) with `head -c 1745` and then
+  trimmed the first 4 off with a `tail -c +5`
+- With this encrypted file, we just decrypted it with any of our private keys
+  and kaboom!: that ever so sweet passphrase right before our eyes.
+- Also, we unfortunately learned of the quite sought-after blue blood of our
+  crabby companions that threatens their livelihood.
