@@ -1,0 +1,41 @@
+Team: muppets
+
+Methodology:
+- It would be false for any engineer on this planet to say they were not
+  standing on the shoulders of giants. After creating a new SSH key file
+  with all of our public keys and uploading that to the final server, we
+  connected and began our search of the system.
+- It did not take long for us to see that we had read privileges to other
+  users on the system, so we got a little curious and checked out what some
+  of the other teams had done. In `/home/doggos`, we found an exploit.c file,
+  so we looked into what this was exploiting. This led us to
+  <http://akat1.pl/?id=2>, which relies on an issue in the local mailing
+  program. Basically, a race condition exists in mail.local where the path
+  to `/var/mail/$USER` can be manipulated to open an arbitrary file that is
+  copied to the mailbox location and allow for its ownership to be changed.
+  With this comes the ability to spawn a shell with the SUID bit set, allowing
+  the execution of commands as root, while still technically under the normal
+  $USER.
+- This sounded good to us, so after fixing a problem where we had to change
+  a line in the source code to use a different path name for the auxiliary
+  file in `/tmp`, we were able to execute the exploit.
+- There were other users on the system attempting a similar exploit at the
+  same time, both from our team and others, so the exploit wasn't perfect,
+  sometimes getting stuck waiting for a file to be accessible and getting
+  stuck in its own race condition it was attempting to create.
+  Sometimes, however, the exploit would execute successfully and we were
+  greeted with a SUID instance of `ksh`, which was run from `/tmp/ksh`.
+  While still technically run under our normal $USER, having the SUID
+  bit set on the executable meant every command we ran was ran with root
+  privileges, meaning the system was ours.
+- We hopped on over to `/var/www` and made our presence known to the rest of
+  the class, but while also respecting the order of their creations and the
+  effort they put into them.
+- Thank you, Professor Schaumann, for the engaging CTF and very engaging
+  semester of CS615. We all learned a ton and enjoyed every bit of the class.
+  Our appreciation for the horseshoe crab has definitely increased quite
+  substantially.
+
+- Tyler Kaminski
+- Mitchell Reiff
+- Ryan Gray
