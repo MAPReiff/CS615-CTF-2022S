@@ -1,0 +1,38 @@
+Team: muppets
+
+Passphrase: Horseshoe Crabs swim upside down.
+
+Method:
+- We began with the information that only connections from the part of the
+  world where mangrove horseshoe crabs live, so we went to its Wikipedia page
+  and found some of its areas of origin to be Hong Kong and Singapore.
+- We tried using VPNs from those regions to no avail, so we reasoned we would
+  probably need to connect from an AWS region from the same area of the world
+  as the mangrove horseshoe crab.
+- We then spent some time setting up a dualstack AWS instance in Mumbai,
+  India, one of the other regions where the crabs are native to.
+- Once we set that up, we connected to the level 4 URL as our muppets user
+  and we entered our home directory.
+- We spent some time trying to brute-force root with some random password
+  ideas, but we eventually used the hint given from the MOTD to not be
+  "dirty", so we looked for some privilege-escalation exploits related to
+  dirtiness and found the dirty pipe exploit.
+- This directed us to <https://github.com/0xIronGoat/dirty-pipe>, so we
+  statically-compiled the exploit binary and ran the command
+  `./dirty-pipe /etc/passwd 1 "$(sed 's/root/:x/oot:/' /etc/passwd)"`,
+  followed by su, and we were greeted with a root prompt.
+- With this, we then hopped around the system, where we found a binary in
+  /home/limulus for uploading public keys. We followed the usage format and
+  at first, we submitted our GPG public keys. Nothing occurred and we could
+  not find any sort of encrypted files so we thought this public key required
+  was most likely for SSH public keys, and not GPG public keys. We re-tried
+  with our SSH keys and the corresponding GPG signature and the public key
+  was installed.
+- We now wondered what system this installation gave us access to.
+- Given that the server left to infiltrate was the final server, we settled
+  on the idea that the server our keys were installed to was
+  <https://cs615ctf.stevens.netmeister.org/>. From running an nmap, we found
+  port 2230 to be the one advertising SSH, so we ran
+  `ssh muppets@cs615ctf.stevens.netmeister.org -p 2230` and we were
+  provided with the passphrase for the final level:
+  `Horseshoe Crabs swim upside down.`
